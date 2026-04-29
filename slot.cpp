@@ -82,7 +82,7 @@ int main(){
             std::cout << "3 iguales! Ganas 50 monedas\n";
             jug.ganar(50);
         }
-        else if(r1 == r2 || r1 == r3 || r2 == r3){
+        else if(r1 == r2 or r1 == r3 or r2 == r3){
             std::cout << "2 iguales! Ganas 20 monedas\n";
             jug.ganar(20);
         }

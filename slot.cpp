@@ -3,6 +3,18 @@
 #include <cstdlib>
 #include <ctime>
 
+// extra
+class Maquina{
+    public:
+        char simbolos[4] = {'@','#','$','%'};
+
+        void tirar(char &r1, char &r2, char &r3){
+            r1 = simbolos[rand() % 4];
+            r2 = simbolos[rand() % 4];
+            r3 = simbolos[rand() % 4];
+        }
+};
+
 class Jugador{
     private:
         std::string nombre_;
@@ -30,7 +42,6 @@ class Jugador{
         }
 };
 
-// Simbolos glob
 char simbolos[4] = {'@','#','$','%'};
 
 int main(){
@@ -42,6 +53,7 @@ int main(){
     std::cin >> nombre;
 
     Jugador jug(nombre);
+    Maquina maq; 
 
     int record = 100; 
 
@@ -58,6 +70,12 @@ int main(){
         std::cout << "Tirar? (s/n): ";
         std::cin >> op;
 
+        // validar
+        if(op != 's' && op != 'n'){
+            std::cout << "Entrada invalida\n";
+            continue;
+        }
+
         if(op == 'n'){
             break;
         }
@@ -66,14 +84,14 @@ int main(){
 
         jug.apostar(10);
 
-        // tirar 3 simbo aleato
-        char r1 = simbolos[rand() % 4];
-        char r2 = simbolos[rand() % 4];
-        char r3 = simbolos[rand() % 4];
+        char r1, r2, r3;
+        maq.tirar(r1, r2, r3);
 
+        //imprimir
+        std::cout<<"====================\n";
         std::cout << "[ " << r1 << " ] [ " << r2 << " ] [ " << r3 << " ]\n";
+        std::cout<<"====================\n";
 
-        //Resultados
         if(r1 == '@' && r2 == '@' && r3 == '@'){
             std::cout << "JACKPOT!!! Ganas 100 monedas\n";
             jug.ganar(100);
@@ -90,7 +108,6 @@ int main(){
             std::cout << "Nada, intenta otra vez\n";
         }
 
-        //actualizar record
         if(jug.getMonedas() > record){
             record = jug.getMonedas();
         }
@@ -98,6 +115,15 @@ int main(){
 
     std::cout << "Juego terminado\n";
     jug.mostrarSaldo();
-    std::cout << "Record maximo: " << record << std::endl; //nuevo record
+
+    // final
+    if(jug.getMonedas() <= 0){
+        std::cout<<"Te quedaste sin monedas\n";
+    } else {
+        std::cout<<"Saliste del juego\n";
+    }
+
+    std::cout << "Record maximo: " << record << std::endl;
+
     return 0;
 }

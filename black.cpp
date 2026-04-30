@@ -3,6 +3,16 @@
 #include <cstdlib>
 #include <ctime>
 
+// clase extra
+class Mazo{
+    public:
+        int cartas[13] = {2,3,4,5,6,7,8,9,10,10,10,10,11};
+
+        int sacar(){
+            return cartas[rand() % 13];
+        }
+};
+
 class Jugador{
     private:
         std::string nombre_;
@@ -30,15 +40,6 @@ class Jugador{
         }
 };
 
-// mazo global 
-int mazo[13] = {2,3,4,5,6,7,8,9,10,10,10,10,11};
-
-int sacarCarta(){
-    int r = rand() % 13;
-    return mazo[r];
-}
-
-
 int main(){
 
     srand(time(0));
@@ -48,71 +49,90 @@ int main(){
     std::cin >> nombre;
 
     Jugador jug(nombre);
-    Jugador dealer("dealer");
+    Jugador crupier("Crupier");
+
+    Mazo mazo; 
 
     // cartas iniciales
-    int cartajug = sacarCarta();
-    int cartajug2 = sacarCarta();
-    jug.sumarPuntos(cartajug);
-    jug.sumarPuntos(cartajug2);
+    int carta1 = mazo.sacar();
+    int carta2 = mazo.sacar();
 
-    int cartcrup = sacarCarta();
-    int cartcrup2 = sacarCarta();
-    dealer.sumarPuntos(cartcrup);
-    dealer.sumarPuntos(cartcrup);
+    jug.sumarPuntos(carta1);
+    jug.sumarPuntos(carta2);
 
-    std::cout << "Tus cartas: " << cartajug << ", " << cartajug2 << std::endl;
+    int carta3 = mazo.sacar();
+    int carta4 = mazo.sacar();
+
+    crupier.sumarPuntos(carta3);
+    crupier.sumarPuntos(carta4);
+
+    std::cout << "Tus cartas: " << carta1 << ", " << carta2 << std::endl;
     jug.mostrar();
 
-    std::cout << "Dealer muestra: " << cartcrup << " y ?" << std::endl;
+    std::cout << "Crupier muestra: " << carta3 << " y ?" << std::endl;
 
-    // turno jugador
     while(true){
+
+        std::cout<<"====================\n";
+        jug.mostrar();
+        std::cout<<"====================\n";
+
         if(jug.getPuntos() > 21){
             std::cout << "Te pasaste de 21. Perdiste\n";
-            return 0;
+            break;
         }
 
         char op;
         std::cout << "Pedir carta (p) o Plantarse (s): ";
         std::cin >> op;
+
+        // validar 
+        if(op != 'p' && op != 's'){
+            std::cout<<"Opcion invalida\n";
+            continue;
+        }
+
         if(op == 'p'){
-            int nueva = sacarCarta();
+            int nueva = mazo.sacar();
             std::cout << "Nueva carta: " << nueva << std::endl;
+
             jug.sumarPuntos(nueva);
-            jug.mostrar();
         }
         else if(op == 's'){
-            std::cout << "Te plantaste con " << jug.getPuntos() << "\n";
+            std::cout << "Te plantaste con " << jug.getPuntos() << std::endl;
             break;
         }
     }
 
-    // turno dealer
-    std::cout << "\nTurno del dealer...\n";
-    dealer.mostrar();
-    while(dealer.getPuntos() < 17){
-        int nueva = sacarCarta();
-        std::cout << "EL Dealer agarra una nueva carta: " << nueva << std::endl;
-        dealer.sumarPuntos(nueva);
-        dealer.mostrar();
+    // turno crupier
+    std::cout << "\nTurno del crupier...\n";
+    crupier.mostrar();
+
+    while(crupier.getPuntos() < 17){
+        int nueva = mazo.sacar();
+        std::cout << "Crupier roba: " << nueva << std::endl;
+        crupier.sumarPuntos(nueva);
     }
 
-    // resultado final
+    // resultados
     std::cout << "\nRESULTADO FINAL\n";
     jug.mostrar();
-    dealer.mostrar();
-    if(dealer.getPuntos() > 21){
-        std::cout << "El Dealer se paso, Ganaste!\n";
+    crupier.mostrar();
+
+    if(jug.getPuntos() > 21){
+        std::cout<<"Perdiste\n";
     }
-    else if(jug.getPuntos() > dealer.getPuntos()){
-        std::cout << "Ganaste!\n";
+    else if(crupier.getPuntos() > 21){
+        std::cout<<"Ganaste\n";
     }
-    else if(jug.getPuntos() < dealer.getPuntos()){
-        std::cout << "Perdiste\n";
+    else if(jug.getPuntos() > crupier.getPuntos()){
+        std::cout<<"Ganaste\n";
+    }
+    else if(jug.getPuntos() < crupier.getPuntos()){
+        std::cout<<"Perdiste\n";
     }
     else{
-        std::cout << "Empate\n";
+        std::cout<<"Empate\n";
     }
 
     return 0;
